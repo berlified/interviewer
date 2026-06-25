@@ -4,10 +4,13 @@ import { useState } from "react";
 import { toast } from "sonner"
 import { BACKEND_URL } from "@/config";
 import axios from "axios";
+import { useNavigate } from "react-router";
 
 export function Form() {
 
   const [github, setGithub] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
     async function onSubmit() {
         if(!github) {
@@ -17,9 +20,13 @@ export function Form() {
               return;
         }
 
-        await axios.post(`${BACKEND_URL}/api/v1/pre-interview`, {
+        setLoading(true);
+        
+        const response = await axios.post(`${BACKEND_URL}/api/v1/pre-interview`, {
              github 
         })
+
+        navigate(`/interview/${response.data.id}`);
     }
 
     return <div className="h-screen w-screen flex justify-center items-center">
@@ -32,7 +39,7 @@ export function Form() {
       <Input placeholder="Github URL "  onChange={e => setGithub(e.target.value)} className="p-4 mt-2"/>
 
       <div className="flex justify-center p-4">
-        <Button onClick={onSubmit}> Start interview </Button>
+        <Button disabled= {loading} onClick={onSubmit}>{loading ? "Starting intervier" : "start interview"}</Button>
       </div>
       
     </div>
