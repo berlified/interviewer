@@ -10,19 +10,21 @@ export function Interview() {
     useEffect(() => {
 
         (async () => {
-            // Create a peer connection
+            // Creating a new WebRTC peer connection
         const pc = new RTCPeerConnection();
 
-        // Set up to play remote audio from the model
+        // Set up to play remote audio from the model || send audio from openAI to browser.
         audioRef.current = document.createElement("audio");
         audioRef.current.autoplay = true;
 
         pc.ontrack = (e) => (audioRef.current!.srcObject = e.streams[0]!);
 
-        // Add local audio track for microphone input in the browser
+        // Add local audio track for microphone input in the browser || access microphone
         const ms = await navigator.mediaDevices.getUserMedia({
         audio: true,
         });
+
+        // add microphone to the call.
         pc.addTrack(ms.getTracks()[0]!);
 
         // Set up data channel for sending and receiving events
@@ -30,10 +32,11 @@ export function Interview() {
 
         // Start the session using the Session Description Protocol (SDP)
         const offer = await pc.createOffer();
+
         await pc.setLocalDescription(offer);
         console.log("hi!")
 
-        const sdpResponse = await fetch(`${BACKEND_URL}/api/v1/session`, {
+        const sdpResponse = await fetch(`${BACKEND_URL}/api/v1/session/${interviewId}`, {
         method: "POST",
         body: offer.sdp,
         headers: {
