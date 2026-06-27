@@ -8,19 +8,17 @@ import { BrowserRouter, Routes, Route } from "react-router";
 
 export function App() {
 
-  
   const [page, setPage] = useState<"form" | "interview" | "results">("form")
 
   return (
     <BrowserRouter>
-      <Routes>
-          <Route path="/" element={<Form />}/>
-          <Route path="/interview/:id" element={<Interview />}/>
-          <Route path="/result/:id" element={<Results />}/>
-      </Routes>
+      <Toaster />
+        <Routes>
+            <Route path="/" element={<Form />}/>
+            <Route path="/interview/:interviewId" element={<Interview />}/>
+            <Route path="/result/:interviewId" element={<Results />}/>
+        </Routes>
     </BrowserRouter>
-      
-    
   )
 }
 

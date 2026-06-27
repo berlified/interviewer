@@ -14,7 +14,7 @@ export function Form() {
 
     async function onSubmit() {
         if(!github) {
-            toast.warning("Please provide Github and Linkedin URL", {
+            toast.warning("Please provide Github URL", {
                 position: "top-center"
               })
               return;
@@ -23,7 +23,7 @@ export function Form() {
         setLoading(true);
         
         const response = await axios.post(`${BACKEND_URL}/api/v1/pre-interview`, {
-             github 
+             github
         })
 
         navigate(`/interview/${response.data.id}`);
