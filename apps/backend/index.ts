@@ -10,7 +10,6 @@ app.use(express.json());
 app.use(cors());
 app.use(express.text({ type: ["application/sdp", "text/plain"] }));
 
-
 app.post("/api/v1/pre-interview" , async (req, res) => {
 
     const { success, data } = PreInterviewBody.safeParse(req.body);
@@ -69,7 +68,7 @@ app.post("/api/v1/session/:interviewId", async(req, res) => {
             res.send(sdp);
 
 
-            initSideband(callId, req.params.interviewId)
+            initSideband(callId!, req.params.interviewId)
 
 
         } catch (error) {

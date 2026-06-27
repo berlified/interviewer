@@ -1,13 +1,17 @@
 import { BACKEND_URL } from "@/config";
 import { useEffect, useRef } from "react"
 import { useParams } from "react-router"
+import { DeepgramClient } from "@deepgram/sdk";
+const client = new DeepgramClient();
+
+
 
 export function Interview() {
 
     const {interviewId} = useParams();
     const audioRef = useRef<HTMLAudioElement>(null);
     
-    useEffect(() => {
+    useEffect(() => { 
 
         (async () => {
             // Creating a new WebRTC peer connection
@@ -23,6 +27,28 @@ export function Interview() {
         const ms = await navigator.mediaDevices.getUserMedia({
         audio: true,
         });
+
+        const socket= new WebSocket('wss://api.deepgram.com/v1/listen', [
+            'token',
+            '2f83ea0b8035d55574939d8c7d70473967684c1c'
+        ]);
+
+        socket.onopen = () => {
+            const mediaRecorder = new MediaRecorder(ms, { mimeType: 'audio/webm'});
+            mediaRecorder.start(250);
+            mediaRecorder.addEventListener('dataavailable', (event) => {
+                socket.send(event.data);
+            })
+        }
+
+        socket.onmessage = (message) => {
+            const received = JSON.parse(message.data);
+            const transcript = received.channel.alternatives[0].transcript;
+
+            if(transcript) {
+                console.log(transcript);
+            }
+        }
 
         // add microphone to the call.
         pc.addTrack(ms.getTracks()[0]!);
@@ -55,8 +81,7 @@ export function Interview() {
     
     return <div>
         <audio autoPlay ref={audioRef}>
-
-
+            
         </audio>
         Interview section and page
     </div>
