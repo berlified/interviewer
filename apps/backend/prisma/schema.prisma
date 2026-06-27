@@ -13,29 +13,30 @@ datasource db {
 }
 
 model Interview {
-  
-  id              String    @id @default(uuid())
-  githubMetaData  Json
-  status          InterviewStatus
-  score           Int   @default(0)
-  conversations   Message[]
+  id                String     @id @default(uuid())
+  githubMetadata    Json?
+  status            InterviewStatus
+  score             Int       @default(0)
+  conversations     Message[]
+  feedback          String?
+}
+
+model Message {
+  id              String     @id  @default(uuid())
+  message         String
+  type            MessageType
+  interviewId     String
+  interview       Interview   @relation(fields: [interviewId], references: [id])
+  createdAt       DateTime    @default(now())
+}
+
+enum MessageType {
+  User
+  Assistant
 }
 
 enum InterviewStatus {
   Pre
   InProgress
   Done
-}
-
-model Message {
-  id          String      @id @default(uuid())
-  message     String
-  type        MessageType
-  interviewId String 
-  Interview   Interview   @relation(fields: [interviewId], references: [id])
-}
-
-enum MessageType {
-  User
-  Assistant
 }
